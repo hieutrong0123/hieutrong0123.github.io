@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import {
   CCard,
   CDataTable,
@@ -75,10 +76,9 @@ class OrdersTabStatus extends Component {
     orderservice_json
       .canclebyId(this.state.id)
       .then(res => {
-          alert("Huỷ đơn hàng thành công");
-          window.location.reload();        
-        }
-      )
+        alert("Huỷ đơn hàng thành công");
+        window.location.reload();
+      })
       .catch(err => alert("Máy chủ đang bận, vui lòng thử lại sau"));
     // .catch(err => console.log(err));
   }
@@ -138,10 +138,10 @@ class OrdersTabStatus extends Component {
                   <CButton
                     size="sm"
                     color="primary"
-                    onClick={() => this.trackOrder(item.id)}
+                    // onClick={() => this.trackOrder(item.id)}
                   >
                     <CIcon name="cil-scrubber" />
-                    Xem thêm
+                    <Link to={`/orders/${item.id}`} style={{ color: "white" }}>Xem thêm</Link>
                   </CButton>
                   &nbsp;&nbsp;&nbsp;
                   {item.statusId === 7 || item.statusId === 8 ? (

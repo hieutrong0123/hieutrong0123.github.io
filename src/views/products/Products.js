@@ -62,12 +62,20 @@ class Products extends Component {
       .then(res => {
         if (res.data.isSuccessed) {
           alert(res.data.resultObj);
-          window.location.reload();
+          // window.location.reload();
+          this.refresh();
         } else {
           alert(res.data.message);
         }
       })
       .catch(err => alert("Máy chủ đang bận, vui lòng thử lại sau"));
+  }
+
+  refresh()
+  {
+    var url = window.location.pathname;
+    this.props.history.push(`/`);
+    this.props.history.push(url);
   }
 
   disable() {
@@ -77,7 +85,8 @@ class Products extends Component {
       .then(res => {
         if (res.data.isSuccessed) {
           alert(res.data.resultObj);
-          window.location.reload();
+          // window.location.reload();
+          this.refresh();
         } else {
           alert(res.data.message);
         }
@@ -92,7 +101,8 @@ class Products extends Component {
       .then(res => {
         if (res.data.isSuccessed) {
           alert(res.data.resultObj);
-          window.location.reload();
+          // window.location.reload();
+          this.refresh();
         } else {
           alert(res.data.message);
         }
