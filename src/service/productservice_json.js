@@ -6,11 +6,13 @@ const updatebyId =  data => api.put(`${api.url.productlink}/update`,data);
 const enablebyId = id =>api.put(`${api.url.productlink}/enable/${id}`);
 const disablebyId = id =>api.put(`${api.url.productlink}/disable/${id}`);
 const deletebyId = id =>api.delete(`${api.url.productlink}/delete/${id}`);
-export default {
+const to_receive = data => api.post(`${api.url.productlink}/to-receive`,data);
+ export default {
   getAll,
   getbyId,
   updatebyId,
   enablebyId,
   disablebyId,
-  deletebyId
+  deletebyId,
+  to_receive
 };

@@ -1,6 +1,5 @@
 import React from 'react'
-import { CFooter, CCardHeader,  } from '@coreui/react'
-import CIcon from "@coreui/icons-react";
+import { CFooter } from '@coreui/react'
 import moment from "moment";
 
 const TheFooter = () => {

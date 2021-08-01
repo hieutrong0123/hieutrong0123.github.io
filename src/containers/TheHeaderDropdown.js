@@ -20,7 +20,8 @@ function logOut () {
       // Cookies.remove(".AspNetCore.Session");
       window.location.href = "/";
     })
-    .catch(err => console.log(err));
+    // .catch(err => console.log(err));
+    .catch(err => alert("Máy chủ đang bận, vui lòng thử lại sau"));
 };
 
 const TheHeaderDropdown = () => {

@@ -92,7 +92,7 @@ class sellingProducts extends Component {
       { key: "id", label: "Mã sản phẩm" },
       { key: "name", label: "Tên sản phẩm" },
       { key: "price", label: "Giá bán" },
-      { key: "quantity", label: "Số lượng đã bán" },
+      { key: "quantity", label: "Đã bán" },
       { key: "link", label: "Tuỳ chọn" }
     ];
     return this.state.list === null ? null : (

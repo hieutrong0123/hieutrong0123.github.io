@@ -94,6 +94,12 @@ let defaultNav = [
     name: "Quản lý bình luận",
     to: "/comments",
     icon:'cil-comment-square'
+  },
+  {
+    _tag: "CSidebarNavItem",
+    name: "Quản lý đánh giá",
+    to: "/reviews",
+    icon:'cil-star'
   }
 ];
 

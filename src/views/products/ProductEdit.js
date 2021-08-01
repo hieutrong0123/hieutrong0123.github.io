@@ -343,6 +343,7 @@ class ProductEdit extends Component {
                       <CInput
                         name="goodsReceipt"
                         placeholder="Số lượng nhập"
+                        disabled
                         value={this.state.goodsReceipt}
                         onChange={this.changeHandler}
                       />
@@ -357,6 +358,7 @@ class ProductEdit extends Component {
                       <CInput
                         name="inventory"
                         placeholder="Số lượng tồn"
+                        disabled
                         value={this.state.inventory}
                         onChange={this.changeHandler}
                       />

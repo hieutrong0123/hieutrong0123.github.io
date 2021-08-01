@@ -209,7 +209,7 @@ class Users extends Component {
           <CModalBody>Người dùng #{this.state.id} sẽ được kích hoạt</CModalBody>
           <CModalFooter>
             <CButton color="primary" onClick={() => this.enable()}>
-              OK
+              Đồng ý
             </CButton>
             <CButton
               color="secondary"
@@ -217,7 +217,7 @@ class Users extends Component {
                 this.setState({ toggleEnable: false });
               }}
             >
-              Cancel
+              Huỷ
             </CButton>
           </CModalFooter>
         </CModal>
@@ -227,7 +227,7 @@ class Users extends Component {
           <CModalBody>Người dùng #{this.state.id} sẽ bị khoá</CModalBody>
           <CModalFooter>
             <CButton color="primary" onClick={() => this.disable()}>
-              OK
+              Đồng ý
             </CButton>
             <CButton
               color="secondary"
@@ -245,7 +245,7 @@ class Users extends Component {
           <CModalBody>Người dùng #{this.state.id} sẽ bị xoá</CModalBody>
           <CModalFooter>
             <CButton color="primary" onClick={() => this.delete()}>
-              OK
+              Đồng ý
             </CButton>
             <CButton
               color="secondary"

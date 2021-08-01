@@ -67,20 +67,20 @@ class OrdersTabStatus extends Component {
           alert(res.data.message);
         }
       })
+      // .catch(err => console.log(err));
       .catch(err => alert("Máy chủ đang bận, vui lòng thử lại sau"));
-    // .catch(err => console.log(err));
   }
 
   cancelOrder() {
     this.setState({ toggleCancelOrder: false });
     orderservice_json
-      .canclebyId(this.state.id)
+      .cancelbyId(this.state.id)
       .then(res => {
         alert("Huỷ đơn hàng thành công");
         window.location.reload();
       })
+      // .catch(err => console.log(err));
       .catch(err => alert("Máy chủ đang bận, vui lòng thử lại sau"));
-    // .catch(err => console.log(err));
   }
 
   escFunction(event) {
@@ -135,14 +135,18 @@ class OrdersTabStatus extends Component {
             link: item => {
               return (
                 <td>
-                  <CButton
-                    size="sm"
-                    color="primary"
-                    // onClick={() => this.trackOrder(item.id)}
+                  <Link
+                  to={{
+                    pathname: `/orders/${item.id}`
+                  }}
+                >
+                  <CButton color="primary" size="sm"
+                  // onClick={() => this.trackOrder(item.id)}
                   >
                     <CIcon name="cil-scrubber" />
-                    <Link to={`/orders/${item.id}`} style={{ color: "white" }}>Xem thêm</Link>
+                    Xem thêm
                   </CButton>
+                </Link>
                   &nbsp;&nbsp;&nbsp;
                   {item.statusId === 7 || item.statusId === 8 ? (
                     <CButton
@@ -212,7 +216,7 @@ class OrdersTabStatus extends Component {
           </CModalBody>
           <CModalFooter>
             <CButton color="primary" onClick={() => this.changeStatus()}>
-              OK
+              Đồng ý
             </CButton>
             <CButton
               color="secondary"
@@ -230,7 +234,7 @@ class OrdersTabStatus extends Component {
           <CModalBody>Đơn hàng #{this.state.id} sẽ bị huỷ</CModalBody>
           <CModalFooter>
             <CButton color="primary" onClick={() => this.cancelOrder()}>
-              OK
+              Đồng ý
             </CButton>
             <CButton
               color="secondary"

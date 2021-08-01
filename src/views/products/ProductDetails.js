@@ -528,6 +528,18 @@ class ProductDetails extends Component {
                   </CButton>
                 </Link>
                 &nbsp;&nbsp;&nbsp;
+                <Link
+                  to={{
+                    pathname: `/products/inventory`,
+                    productId: this.state.id
+                  }}
+                >
+                  <CButton color="info" size="sm">
+                    <CIcon name="cil-star" />
+                    Nhập sản phẩm
+                  </CButton>
+                </Link>
+                &nbsp;&nbsp;&nbsp;
                 <CButton color="dark" size="sm" onClick={() => this.cancel()}>
                   <CIcon name="cil-home" />
                   Trở về danh sách
@@ -542,7 +554,7 @@ class ProductDetails extends Component {
           <CModalBody>Hình ảnh #{this.state.idPhoto} sẽ bị xoá</CModalBody>
           <CModalFooter>
             <CButton color="primary" onClick={() => this.deletePhoto()}>
-              OK
+              Đồng ý
             </CButton>
             <CButton
               color="secondary"
@@ -550,7 +562,7 @@ class ProductDetails extends Component {
                 this.setState({ toggleDelete: false });
               }}
             >
-              Cancel
+              Huỷ
             </CButton>
           </CModalFooter>
         </CModal>

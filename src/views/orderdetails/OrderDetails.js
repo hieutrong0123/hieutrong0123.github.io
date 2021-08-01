@@ -97,7 +97,8 @@ class OrderDetails extends Component {
           alert(res.data.message);
         }
       })
-      .catch(err => console.log(err));
+      // .catch(err => console.log(err));
+      .catch(err => alert("Máy chủ đang bận, vui lòng thử lại sau"));
   }
 
   loadOrderDetails() {
@@ -118,7 +119,8 @@ class OrderDetails extends Component {
           alert(res.data.message);
         }
       })
-      .catch(err => console.log(err));
+      // .catch(err => console.log(err));
+      .catch(err => alert("Máy chủ đang bận, vui lòng thử lại sau"));
   }
 
   loadProduct() {
@@ -137,7 +139,8 @@ class OrderDetails extends Component {
           alert(res.data.message);
         }
       })
-      .catch(err => console.log(err));
+      // .catch(err => console.log(err));
+      .catch(err => alert("Máy chủ đang bận, vui lòng thử lại sau"));
   }
 
   render() {

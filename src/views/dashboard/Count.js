@@ -176,7 +176,7 @@ class Count extends Component {
               {this.state.loadingUser === false ? (
                 <CCol sm="6" lg="3">
                   <CWidgetDropdown
-                    color="gradient-success"
+                    color="gradient-primary"
                     header={
                       this.state.newUser.length === 0
                         ? "Có 0"
@@ -190,7 +190,7 @@ class Count extends Component {
               {this.state.loadingProduct === false ? (
                 <CCol sm="6" lg="3">
                   <CWidgetDropdown
-                    color="gradient-primary"
+                    color="gradient-warning"
                     header={
                       this.state.newProduct.length === 0
                         ? "Có 0"
@@ -204,7 +204,7 @@ class Count extends Component {
               {this.state.loadingCategory === false ? (
                 <CCol sm="6" lg="3">
                   <CWidgetDropdown
-                    color="gradient-warning"
+                    color="gradient-info"
                     header={
                       this.state.newCategory.length === 0
                         ? "Có 0"
@@ -218,7 +218,7 @@ class Count extends Component {
               {this.state.loadingOrder === false ? (
                 <CCol sm="6" lg="3">
                   <CWidgetDropdown
-                    color="gradient-info"
+                    color="gradient-success"
                     header={
                       this.state.newOrder.length === 0
                         ? "Có 0"

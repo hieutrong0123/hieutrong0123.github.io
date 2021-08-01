@@ -34,8 +34,8 @@ class ProductCreate extends Component {
       price: "",
       specifications: "<p><strong>Tên:</strong> Thông số</p>",
       description: "",
-      goodsReceipt: "",
-      inventory: "",
+      goodsReceipt: 0,
+      inventory: 0,
       status: 0,
       categoryId: "",
       alias: "",
@@ -89,10 +89,7 @@ class ProductCreate extends Component {
     } else if (e.target.name === "name") {
       this.setState({ name: e.target.value });
       this.setState({ alias: this.to_slug(e.target.value) });
-      console.log(this.state.alias);
-    } else if (e.target.name === "goodsReceipt") {
-      this.setState({ goodsReceipt: e.target.value });
-      this.setState({ inventory: e.target.value });
+      console.log(this.state.alias);    
     } else {
       this.setState({ [e.target.name]: e.target.value });
       console.log(e.target.value);
@@ -131,11 +128,7 @@ class ProductCreate extends Component {
     } else if (this.state.price < 1) {
       alert("Giá bán không đúng định dạng");
     } else if (!this.state.specifications) {
-      alert("Thông số kỹ thuật không đúng định dạng");
-    } else if (!this.state.goodsReceipt) {
-      alert("Số lượng nhập không đúng định dạng");
-    } else if (!this.state.inventory) {
-      alert("Số lượng tồn không đúng định dạng");
+      alert("Thông số kỹ thuật không đúng định dạng");    
     } else if (!this.state.description) {
       alert("Mô tả không đúng định dạng");
     } else if (!this.state.categoryId) {
@@ -264,22 +257,6 @@ class ProductCreate extends Component {
                       />
                     </CCol>
                   </CFormGroup>
-                  {/* <CFormGroup row>
-                    <CCol md="3">
-                      <CLabel htmlFor="textarea-input">
-                        Thông số kỹ thuật
-                      </CLabel>
-                    </CCol>
-                    <CCol xs="12" md="9">
-                      <CTextarea
-                        name="specifications"
-                        rows="3"
-                        placeholder="Thông số kỹ thuật"
-                        value={this.state.specifications}
-                        onChange={this.changeHandler}
-                      />
-                    </CCol>
-                  </CFormGroup> */}
 
                   <CFormGroup row>
                     <CCol md="3">
@@ -295,14 +272,6 @@ class ProductCreate extends Component {
                           this.setState({ specifications: editor.getData() });
                         }}
                       />
-                      {/* &nbsp;
-                      <CTextarea
-                        name="specifications"
-                        rows="3"
-                        placeholder="Thông số kỹ thuật"
-                        value={this.state.specifications}
-                        onChange={this.changeHandler}
-                      /> */}
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row>
@@ -319,7 +288,7 @@ class ProductCreate extends Component {
                       />
                     </CCol>
                   </CFormGroup>
-                  <CFormGroup row>
+                  {/* <CFormGroup row>
                     <CCol md="3">
                       <CLabel htmlFor="text-input">Số lượng nhập *</CLabel>
                     </CCol>
@@ -348,7 +317,7 @@ class ProductCreate extends Component {
                         onChange={this.changeHandler}
                       />
                     </CCol>
-                  </CFormGroup>
+                  </CFormGroup> */}
                   <CFormGroup row>
                     <CCol md="3">
                       <CLabel>Trạng thái *</CLabel>

@@ -92,8 +92,8 @@ class Login extends Component {
             alert(res.data.message);
           }
         })
-        // .catch(err => console.log(err));
         .catch(err =>alert("Máy chủ đang bận, vui lòng thử lại sau"));
+        // .catch(err => console.log(err));
     }
   }
 

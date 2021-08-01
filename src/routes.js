@@ -45,6 +45,7 @@ import UserEdit from './views/users/UserEdit';
 //Products
 import Products from './views/products/Products';
 import ProductCreate from './views/products/ProductCreate';
+import ProductInventory from "./views/products/ProductInventory";
 import ProductDetails from "./views/products/ProductDetails";
 import ProductEdit from "./views/products/ProductEdit";
 
@@ -72,6 +73,9 @@ import LoginHistory from './views/statistical/LoginHistory';
 
 //Comment
 import Comments from './views/comment/Comments';
+
+//Review
+import Reviews from './views/reviews/Reviews';
 
 
 const routes = [
@@ -125,9 +129,10 @@ const routes = [
   //Product
   { path: '/products', exact: true,  name: 'Danh sách sản phẩm', component: Products },
   { path: '/products/create', exact: true, name: 'Thêm sản phẩm', component: ProductCreate },
+  { path: '/products/inventory', exact: true, name: 'Nhập sản phẩm', component: ProductInventory },
   { path: '/products/edit/:id', exact: true, name: 'Cập nhật sản phẩm', component: ProductEdit },
   { path: '/products/:id', exact: true, name: 'Chi tiết sản phẩm', component: ProductDetails },
-
+  
   //Categories
   { path: '/categories', exact: true,  name: 'Danh sách danh mục', component: Categories },
   { path: '/categories/create', exact: true, name: 'Thêm danh mục', component: CategoryCreate },
@@ -150,6 +155,9 @@ const routes = [
 
   //Comment
   { path: '/comments', exact: true,  name: 'Danh sách bình luận', component: Comments },
+
+  //Comment
+  { path: '/reviews', exact: true,  name: 'Danh sách đánh giá', component: Reviews },
   
 ];
 

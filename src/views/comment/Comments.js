@@ -179,7 +179,7 @@ class Comments extends Component {
           <CModalBody>Bình luận #{this.state.id} sẽ được kích hoạt</CModalBody>
           <CModalFooter>
             <CButton color="primary" onClick={() => this.enable()}>
-              OK
+              Đồng ý
             </CButton>
             <CButton
               color="secondary"
@@ -197,7 +197,7 @@ class Comments extends Component {
           <CModalBody>Bình luận #{this.state.id} sẽ bị khoá</CModalBody>
           <CModalFooter>
             <CButton color="primary" onClick={() => this.disable()}>
-              OK
+              Đồng ý
             </CButton>
             <CButton
               color="secondary"
