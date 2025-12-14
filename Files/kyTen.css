@@ -1,0 +1,87 @@
+/* Hộp thoại xác nhận xóa chữ ký */
+#deleteDialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    width: auto;
+    min-width: 350px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    display: none;
+    z-index: 1000;
+}
+
+#deleteDialog p {
+    margin-bottom: 10px;
+    font-size: 20px;
+    text-align: center;
+}
+#deleteDialog_group_button{
+    display: flex;
+    justify-content: center;
+}
+#deleteDialog button {
+    margin: 5px;
+    padding: 15px 40px;
+    font-size: 16px;
+    cursor: pointer;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+#confirmDelete{
+    background-color: rgb(206, 0, 0);
+    color: white;
+}
+
+/* Định dạng chữ ký khi được chọn */
+#previewContainer .selected {
+    border: 2px solid red;
+    box-sizing: border-box;
+}
+
+/* Đảm bảo tất cả hộp thoại ẩn khi chưa được kích hoạt */
+.hidden {
+    display: none;
+}
+
+
+
+/* Nhóm nút trong popup xóa */
+#deleteDialog_group_button {
+    display: flex;
+    flex-direction: column;   /* Sắp xếp theo cột */
+    align-items: center;      /* Căn giữa ngang */
+    gap: 10px;                /* Khoảng cách giữa các nút */
+    margin-top: 15px;
+}
+
+#deleteDialog_group_button button {
+    width: 80%;               /* Độ rộng đồng đều */
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+/* Nút Xóa */
+#confirmDelete {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+/* Nút Chặn IP */
+#blockIP {
+    background-color: #f0ad4e;
+    color: #fff;
+}
+
+/* Nút Hủy */
+#cancelDelete {
+    background-color: #6c757d;
+    color: #fff;
+}

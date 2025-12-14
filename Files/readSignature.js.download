@@ -1,0 +1,358 @@
+// ==================== CẤU HÌNH ====================
+const urlParams = new URLSearchParams(window.location.search);
+const canDelete = urlParams.get("key") === managerSignatureKey;
+
+let selectedSignature = null;
+let longPressTimer = null;
+let longPressFired = false;
+
+// ==================== TẠO NÚT LƯU VỊ TRÍ (JS) ====================
+function createSaveButton() {
+    if (document.getElementById("savePositionBtn")) return; // tránh tạo lần 2
+
+    const btn = document.createElement("button");
+    btn.id = "savePositionBtn";
+    btn.textContent = "Lưu vị trí";
+    btn.classList.add("hidden");
+    document.body.appendChild(btn);
+
+    const style = document.createElement("style");
+    style.textContent = `
+        #savePositionBtn {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 30px;
+            font-size: 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 2000;
+        }
+        #savePositionBtn.hidden { display: none; }
+        #savePositionBtn:hover { background-color: #0056b3; }
+    `;
+    document.head.appendChild(style);
+
+    btn.addEventListener("click", () => {
+        if (!selectedSignature) return;
+        const signatureId = selectedSignature.dataset.id;
+        // style.left is like "10%" -> parseFloat works
+        const x = parseFloat(selectedSignature.style.left);
+        const y = parseFloat(selectedSignature.style.top);
+
+        // Gửi request cập nhật vị trí
+        fetch(libraryURL + "save_signature.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: signatureId, pos_x: x, pos_y: y, update_position: true })
+        })
+            .then(async r => {
+                let data;
+                try { data = await r.json(); } catch (err) { throw new Error("Phản hồi không hợp lệ"); }
+                if (data.success) {
+                    alert("Đã lưu vị trí mới!");
+                    btn.classList.add("hidden");
+                    // tắt viền xanh và hủy selection
+                    if (selectedSignature) {
+                        selectedSignature.style.border = "";
+                        selectedSignature = null;
+                    }
+                } else {
+                    throw new Error(data.error || "Lưu thất bại");
+                }
+            })
+            .catch(err => {
+                console.error("Lỗi khi lưu vị trí:", err);
+                alert("Lưu vị trí thất bại: " + (err.message || err));
+            });
+    });
+}
+createSaveButton();
+
+// ==================== HÀM LOAD CHỮ KÝ ====================
+function loadSignatures(idUser, userCard, sizeSig) {
+    fetch(libraryURL + `get_signatures.php?idUser=${encodeURIComponent(idUser)}&userCard=${encodeURIComponent(userCard)}`)
+        .then(response => response.json())
+        .then(signatures => {
+            if (signatures.error) {
+                console.error("Lỗi từ PHP:", signatures.error);
+                return;
+            }
+
+            const container = document.getElementById("previewContainer");
+            container.innerHTML = "";
+
+            signatures.forEach(sig => {
+                const img = document.createElement("img");
+                img.src = libraryURL + sig.image_path;
+                img.alt = `Chữ ký của ${sig.user_card}`;
+                img.dataset.id = sig.id;
+                img.classList.add("signature-img");
+                img.style.width = sizeSig + "%";
+                img.style.position = "absolute";
+                img.style.top = sig.pos_y + "%";
+                img.style.left = sig.pos_x + "%";
+                img.dataset.ip = sig.ip;
+                img.setAttribute("draggable", "false");
+
+                if (canDelete) {
+                    enableSignatureEvents(img);
+                } else {
+                    img.style.cursor = "default";
+                }
+
+                container.appendChild(img);
+            });
+        })
+        .catch(error => console.error("Lỗi khi tải chữ ký:", error));
+}
+
+// ==================== SỰ KIỆN: pointer (mouse + touch) + drag + long-press ====================
+function enableSignatureEvents(img) {
+    const container = document.getElementById("previewContainer");
+    img.style.touchAction = "none"; // tránh hành vi scroll mặc định trên touch
+    img.style.cursor = "grab";
+
+    let startX = 0, startY = 0;
+    let startImgLeft = 0, startImgTop = 0;
+    let isDragging = false;
+    let pointerId = null;
+
+    function clampToContainer(leftPx, topPx, imgRect, containerRect) {
+        const maxLeft = Math.max(0, containerRect.width - imgRect.width);
+        const maxTop = Math.max(0, containerRect.height - imgRect.height);
+        const clampedLeft = Math.min(Math.max(0, leftPx), maxLeft);
+        const clampedTop = Math.min(Math.max(0, topPx), maxTop);
+        return {
+            leftPercent: (clampedLeft / containerRect.width) * 100,
+            topPercent: (clampedTop / containerRect.height) * 100
+        };
+    }
+
+    function onPointerDown(e) {
+        // chỉ handle primary pointer
+        if (pointerId !== null) return;
+        pointerId = e.pointerId;
+        img.setPointerCapture && img.setPointerCapture(pointerId);
+
+        e.preventDefault();
+
+        const rect = img.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+
+        startX = e.clientX;
+        startY = e.clientY;
+        startImgLeft = rect.left - containerRect.left; // px relative to container
+        startImgTop = rect.top - containerRect.top;
+
+        isDragging = false;
+        longPressFired = false;
+
+        // Set selection + green border immediately
+        if (selectedSignature && selectedSignature !== img) {
+            selectedSignature.style.border = "";
+        }
+        selectedSignature = img;
+        img.style.border = "2px solid green"; // viền xanh
+        document.getElementById("savePositionBtn").classList.remove("hidden");
+
+        // Long press timer
+        longPressTimer = setTimeout(() => {
+            longPressFired = true;
+            img.style.border = "2px solid red";
+            document.getElementById("deleteDialog").style.display = "block";
+        }, 1000);
+
+        document.addEventListener("pointermove", onPointerMove);
+        document.addEventListener("pointerup", onPointerUp);
+        document.addEventListener("pointercancel", onPointerCancel);
+    }
+
+    function onPointerMove(e) {
+        if (e.pointerId !== pointerId) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // Nếu di chuyển vượt ngưỡng -> bắt đầu drag và huỷ long press
+        if (!isDragging && dist > 6) {
+            isDragging = true;
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+            img.style.cursor = "grabbing";
+        }
+
+        if (isDragging) {
+            const containerRect = container.getBoundingClientRect();
+            const imgRect = img.getBoundingClientRect();
+
+            let newLeftPx = startImgLeft + (e.clientX - startX);
+            let newTopPx = startImgTop + (e.clientY - startY);
+
+            const { leftPercent, topPercent } = clampToContainer(newLeftPx, newTopPx, imgRect, containerRect);
+            img.style.left = leftPercent + "%";
+            img.style.top = topPercent + "%";
+        }
+    }
+
+    function onPointerUp(e) {
+        if (e.pointerId !== pointerId) return;
+        cleanupPointerListeners();
+
+        // nếu longPressTimer vẫn tồn tại (người click và thả < 1s) -> nó không phải longPress -> chỉ chọn (đã set border xanh lúc down)
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+
+        // reset cursor
+        img.style.cursor = "move";
+        pointerId = null;
+        isDragging = false;
+    }
+
+    function onPointerCancel(e) {
+        if (e.pointerId !== pointerId) return;
+        cleanupPointerListeners();
+    }
+
+    function cleanupPointerListeners() {
+        document.removeEventListener("pointermove", onPointerMove);
+        document.removeEventListener("pointerup", onPointerUp);
+        document.removeEventListener("pointercancel", onPointerCancel);
+        try { img.releasePointerCapture && img.releasePointerCapture(pointerId); } catch (err) { }
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+        pointerId = null;
+    }
+
+    // Bổ sung: nếu người hủy (escape hoặc click vào vùng khác), giữ nguyên logic hủy
+    img.addEventListener("pointerdown", onPointerDown);
+}
+
+// ==================== XÓA CHỮ KÝ ====================
+document.getElementById("confirmDelete").addEventListener("click", () => {
+    if (!selectedSignature || !canDelete) {
+        alert("Không có chữ ký nào được chọn hoặc bạn không có quyền xóa.");
+        return;
+    }
+
+    const signatureId = selectedSignature.dataset.id;
+    if (!signatureId) {
+        alert("Lỗi: Không lấy được ID chữ ký!");
+        return;
+    }
+
+    fetch(libraryURL + "delete_signature.php", {
+        method: "POST",
+        body: JSON.stringify({ id: signatureId }),
+        headers: { "Content-Type": "application/json" }
+    })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                alert("Chữ ký đã được xóa!");
+                selectedSignature.remove();
+                selectedSignature = null;
+                document.getElementById("deleteDialog").style.display = "none";
+                // ẩn nút lưu nếu hiển thị
+                const btn = document.getElementById("savePositionBtn");
+                if (btn) btn.classList.add("hidden");
+            } else {
+                alert("Lỗi khi xóa: " + data.error);
+            }
+        })
+        .catch(error => {
+            console.error("Lỗi khi xóa chữ ký:", error);
+            alert("Lỗi khi xóa chữ ký.");
+        });
+});
+
+// Hủy xóa popup
+document.getElementById("cancelDelete").addEventListener("click", () => {
+    document.getElementById("deleteDialog").style.display = "none";
+    if (selectedSignature) {
+        selectedSignature.style.border = "";
+        selectedSignature = null;
+    }
+});
+
+
+
+// ==================== THÊM NÚT CHẶN + CSS BẰNG JS ====================
+function addButtonBlockIP() {
+    const dialog = document.querySelector("#deleteDialog");
+    if (!dialog) return;
+
+    // tạo nút Chặn IP
+    const blockBtn = document.createElement("button");
+    blockBtn.id = "blockIP";
+    blockBtn.textContent = "Chặn chữ ký từ người này";
+    blockBtn.className = "btn btn-warning"; // style tùy bạn
+
+    // tìm nút Hủy
+    const cancelBtn = dialog.querySelector("#cancelDelete");
+
+    if (cancelBtn) {
+        const parent = cancelBtn.parentNode; // lấy đúng parent của nút Hủy
+        if (parent) {
+            parent.insertBefore(blockBtn, cancelBtn); // chèn trước nút Hủy
+        } else {
+            dialog.appendChild(blockBtn); // fallback nếu parent null
+        }
+    } else {
+        dialog.appendChild(blockBtn); // fallback nếu không tìm thấy nút Hủy
+    }
+
+    // CSS
+    const style = document.createElement("style");
+    style.textContent = `
+        #deleteDialog button {
+            display: block;
+            width: 80%;
+            margin: 8px auto;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        #confirmDelete { background: #dc3545; color: #fff; }
+        #blockIP      { background: #f0ad4e; color: #fff; }
+        #cancelDelete { background: #6c757d; color: #fff; }
+    `;
+    document.head.appendChild(style);
+
+    blockBtn.addEventListener("click", () => {
+        if (!selectedSignature) return alert("Chưa chọn chữ ký nào!");
+
+        const ip = selectedSignature.dataset.ip;
+        const signatureId = selectedSignature.dataset.id;
+        if (!signatureId) return alert("Không lấy được chữ ký!");
+
+        fetch(libraryURL + "block_ip.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: signatureId })   // 🔹 gửi id
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Đã chặn chữ ký từ người này");
+                    dialog.style.display = "none";
+                } else {
+                    alert("Chặn lỗi: " + data.error);
+                }
+            })
+            .catch(err => {
+                console.error("Lỗi chặn:", err);
+                alert("Có lỗi kết nối khi chặn");
+            });
+    });
+
+}
+document.addEventListener("DOMContentLoaded", addButtonBlockIP);
+
